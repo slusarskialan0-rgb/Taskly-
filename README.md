@@ -43,8 +43,45 @@ The app ships with a `localStorage` backend. To persist data server-side via Goo
    ```js
    const API_BASE = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
    ```
-3. Implement the expected actions (`getJobs`, `saveJob`, `deleteJob`, etc.) in your Apps Script.
+3. Implement the expected actions (`getJobs`, `saveJob`, `deleteJob`, etc.) in your Apps Script, following the calling convention used by `api.js`:
 
+   - **Get jobs:** `GET ${API_BASE}?action=getJobs`  
+     The backend should respond with JSON, either as an array of job objects:
+     ```json
+     [
+       { "id": "1", "client": "ACME", "...": "..." }
+     ]
+     ```
+     or wrapped in an object:
+     ```json
+     { "jobs": [ { "id": "1", "client": "ACME", "...": "..." } ] }
+     ```
+
+   - **Save job:** `POST ${API_BASE}` with a JSON body:
+     ```json
+     {
+       "action": "saveJob",
+       "job": { "id": "1", "client": "ACME", "...": "..." }
+     }
+     ```
+     Respond with JSON, for example:
+     ```json
+     { "success": true, "job": { "id": "1", "client": "ACME", "...": "..." } }
+     ```
+
+   - **Delete job:** `POST ${API_BASE}` with a JSON body:
+     ```json
+     {
+       "action": "deleteJob",
+       "id": "1"
+     }
+     ```
+     Respond with JSON, for example:
+     ```json
+     { "success": true }
+     ```
+
+   All responses must be valid JSON, and your web app deployment must allow CORS requests from the origin where you host Taskly Pro.
 The API layer falls back to `localStorage` automatically whenever the remote endpoint is unavailable.
 
 ## Profit Calculation
