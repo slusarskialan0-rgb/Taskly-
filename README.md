@@ -4,7 +4,7 @@ A lightweight, browser-based SaaS panel for managing physical work orders (zlece
 
 ## Features
 
-- **Dashboard** – at-a-glance stats: total orders, completed, in-progress, daily profit, monthly profit, and active worker count. Shows the most recent orders.
+- **Dashboard** – at-a-glance stats: total orders, completed, in-progress, daily profit, monthly profit, and total worker count. Shows the most recent orders.
 - **Work Orders (Zlecenia)** – create, edit, and delete orders. Filter by status, sort by date or profit, and search by city. Profit is calculated automatically using the formula: `(client rate − worker rate) × hours × number of people`.
 - **Workers (Pracownicy)** – manage your workforce: name, phone, skills, and availability toggle.
 - **Clients (Klienci)** – keep a client directory with company name, phone, e-mail, and notes.
