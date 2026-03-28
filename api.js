@@ -147,3 +147,24 @@ async function apiSaveClient(client) {
 async function apiDeleteClient(id) {
   lsSet(LS_CLIENTS, lsGet(LS_CLIENTS).filter(c => c.id !== id));
 }
+
+// ══════════════════════════════════════════════════════════════
+// PROFILE API
+// ══════════════════════════════════════════════════════════════
+
+const LS_PROFILE = 'taskly_profile';
+
+const DEFAULT_PROFILE = { username: 'admin', displayName: 'Administrator', email: '', password: 'admin123' };
+
+function apiGetProfile() {
+  try {
+    const raw = localStorage.getItem(LS_PROFILE);
+    if (raw) return { ...DEFAULT_PROFILE, ...JSON.parse(raw) };
+  } catch { /* */ }
+  return { ...DEFAULT_PROFILE };
+}
+
+function apiSaveProfile(profile) {
+  lsSet(LS_PROFILE, profile);
+  return profile;
+}

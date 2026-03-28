@@ -60,8 +60,18 @@
       const pass = document.getElementById('password').value;
       const err  = document.getElementById('loginError');
 
-      // Simple credential check – replace with real auth if needed
-      if (user === 'admin' && pass === 'admin123') {
+      // Check credentials against stored profile, fall back to defaults
+      let validUser = 'admin', validPass = 'admin123';
+      try {
+        const raw = localStorage.getItem('taskly_profile');
+        if (raw) {
+          const profile = JSON.parse(raw);
+          if (profile.username) validUser = profile.username;
+          if (profile.password) validPass = profile.password;
+        }
+      } catch { /* use defaults */ }
+
+      if (user === validUser && pass === validPass) {
         localStorage.setItem('taskly_session', 'active');
         localStorage.setItem('taskly_user', user);
         window.location.href = 'app.html';
