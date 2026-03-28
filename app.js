@@ -10,6 +10,7 @@ let state = {
   jobs:    [],   // Array<Job>
   workers: [],   // Array<Worker>
   clients: [],   // Array<Client>
+  profile: null, // Object
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -21,8 +22,8 @@ function checkSession() {
   if (localStorage.getItem('taskly_session') !== 'active') {
     window.location.href = 'index.html';
   }
-  const user = localStorage.getItem('taskly_user') || 'admin';
-  document.getElementById('sidebarUser').textContent = user;
+  const profile = apiGetProfile();
+  document.getElementById('sidebarUser').textContent = profile.displayName || profile.username || 'admin';
 }
 
 /** Ładuj dane i renderuj aplikację */
@@ -37,8 +38,10 @@ async function init() {
   state.jobs    = jobs;
   state.workers = workers;
   state.clients = clients;
+  state.profile = apiGetProfile();
 
   renderAll();
+  renderProfile();
   bindEvents();
 }
 
@@ -622,6 +625,69 @@ function renderCityChart() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// PROFIL UŻYTKOWNIKA
+// ══════════════════════════════════════════════════════════════
+
+/** Zwróć inicjały z imienia i nazwiska (max 2 litery) */
+function getInitials(name) {
+  return (name || 'A').trim().split(/\s+/).filter(w => w.length > 0).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'A';
+}
+
+/** Renderuj formularz profilu */
+function renderProfile() {
+  const p = state.profile || apiGetProfile();
+  document.getElementById('profileDisplayName').value = p.displayName || '';
+  document.getElementById('profileEmail').value       = p.email || '';
+  document.getElementById('profileAvatar').textContent = getInitials(p.displayName || p.username);
+}
+
+/** Zapisz zmiany profilu */
+function saveProfile() {
+  const displayName       = document.getElementById('profileDisplayName').value.trim();
+  const email             = document.getElementById('profileEmail').value.trim();
+  const currentPassword   = document.getElementById('profileCurrentPassword').value;
+  const newPassword       = document.getElementById('profileNewPassword').value;
+  const confirmPassword   = document.getElementById('profileConfirmPassword').value;
+
+  const profile = state.profile ? { ...state.profile } : apiGetProfile();
+
+  // Walidacja zmiany hasła
+  if (currentPassword || newPassword || confirmPassword) {
+    if (currentPassword !== profile.password) {
+      showToast('Nieprawidłowe obecne hasło.', 'error');
+      return;
+    }
+    if (newPassword.length < 6) {
+      showToast('Nowe hasło musi mieć co najmniej 6 znaków.', 'error');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showToast('Hasła nie są zgodne.', 'error');
+      return;
+    }
+    profile.password = newPassword;
+  }
+
+  profile.displayName = displayName;
+  profile.email       = email;
+
+  state.profile = apiSaveProfile(profile);
+
+  // Zaktualizuj wyświetlaną nazwę w sidebarze
+  document.getElementById('sidebarUser').textContent = displayName || profile.username || 'admin';
+
+  // Wyczyść pola hasła
+  document.getElementById('profileCurrentPassword').value = '';
+  document.getElementById('profileNewPassword').value     = '';
+  document.getElementById('profileConfirmPassword').value = '';
+
+  // Odśwież avatar
+  document.getElementById('profileAvatar').textContent = getInitials(displayName || profile.username);
+
+  showToast('Profil zaktualizowany!', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════
 // TOAST / POWIADOMIENIA
 // ══════════════════════════════════════════════════════════════
 let toastTimer = null;
@@ -701,6 +767,9 @@ function bindEvents() {
   document.getElementById('closeClientModal').addEventListener('click', closeClientModal);
   document.getElementById('cancelClientModal').addEventListener('click', closeClientModal);
   document.getElementById('clientsList').addEventListener('click', handleClientListClick);
+
+  // ── Profil ────────────────────────────────────────────────
+  document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 
   // Zamknij modala klikając tło
   document.querySelectorAll('.modal-overlay').forEach(overlay => {

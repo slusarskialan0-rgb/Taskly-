@@ -31,6 +31,9 @@
       <button class="nav-item" data-section="stats">
         <span class="nav-icon">📈</span> Statystyki
       </button>
+      <button class="nav-item" data-section="profile">
+        <span class="nav-icon">👤</span> Profil
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -182,6 +185,48 @@
         <div class="card stat-detail-card wide">
           <h3>Top 5 miast</h3>
           <div id="cityChart" class="chart-placeholder"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFIL -->
+    <section id="section-profile" class="section">
+      <div class="section-header">
+        <h2>Mój profil</h2>
+        <p class="section-sub">Zaktualizuj swoje dane i hasło.</p>
+      </div>
+      <div class="profile-card card">
+        <div class="profile-avatar" id="profileAvatar">A</div>
+        <form id="profileForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profileDisplayName">Wyświetlana nazwa</label>
+              <input type="text" id="profileDisplayName" placeholder="np. Jan Kowalski" />
+            </div>
+            <div class="form-group">
+              <label for="profileEmail">E-mail</label>
+              <input type="email" id="profileEmail" placeholder="twoj@email.pl" />
+            </div>
+          </div>
+          <hr class="profile-divider" />
+          <p class="profile-section-title">Zmiana hasła</p>
+          <div class="form-group">
+            <label for="profileCurrentPassword">Obecne hasło</label>
+            <input type="password" id="profileCurrentPassword" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profileNewPassword">Nowe hasło</label>
+              <input type="password" id="profileNewPassword" placeholder="••••••••" autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label for="profileConfirmPassword">Potwierdź hasło</label>
+              <input type="password" id="profileConfirmPassword" placeholder="••••••••" autocomplete="new-password" />
+            </div>
+          </div>
+        </form>
+        <div class="profile-actions">
+          <button class="btn btn-primary" id="saveProfileBtn">Zapisz zmiany</button>
         </div>
       </div>
     </section>
