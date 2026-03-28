@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASKLY PRO – Logowanie</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-icon">⚡</span>
+        <h1 class="logo-text">TASKLY <span class="logo-pro">PRO</span></h1>
+      </div>
+      <p class="login-subtitle">Panel zarządzania zleceniami pracy fizycznej</p>
+
+      <form id="loginForm" class="login-form" novalidate>
+        <div class="form-group">
+          <label for="username">Login</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="admin"
+            autocomplete="username"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Hasło</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+        <div id="loginError" class="login-error hidden">
+          Nieprawidłowy login lub hasło.
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          Zaloguj się
+        </button>
+      </form>
+
+      <p class="login-hint">Domyślne dane: admin / admin123</p>
+    </div>
+  </div>
+
+  <script>
+    // Redirect to app if already logged in
+    if (localStorage.getItem('taskly_session') === 'active') {
+      window.location.href = 'app.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const err  = document.getElementById('loginError');
+
+      // Simple credential check – replace with real auth if needed
+      if (user === 'admin' && pass === 'admin123') {
+        localStorage.setItem('taskly_session', 'active');
+        localStorage.setItem('taskly_user', user);
+        window.location.href = 'app.html';
+      } else {
+        err.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

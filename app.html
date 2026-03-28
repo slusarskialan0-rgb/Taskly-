@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASKLY PRO – Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="app-body">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">TASKLY <span class="logo-pro">PRO</span></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <button class="nav-item" data-section="jobs">
+        <span class="nav-icon">📋</span> Zlecenia
+      </button>
+      <button class="nav-item" data-section="workers">
+        <span class="nav-icon">👷</span> Pracownicy
+      </button>
+      <button class="nav-item" data-section="clients">
+        <span class="nav-icon">🏢</span> Klienci
+      </button>
+      <button class="nav-item" data-section="stats">
+        <span class="nav-icon">📈</span> Statystyki
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span id="sidebarUser" class="sidebar-user"></span>
+      <button id="logoutBtn" class="btn btn-ghost btn-sm">Wyloguj</button>
+    </div>
+  </aside>
+
+  <!-- ===== TOPBAR (mobile) ===== -->
+  <header class="topbar">
+    <button id="menuToggle" class="menu-toggle" aria-label="Menu">☰</button>
+    <span class="topbar-title">TASKLY PRO</span>
+    <button id="topLogoutBtn" class="btn btn-ghost btn-sm">Wyloguj</button>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="mainContent" class="main-content">
+
+    <!-- DASHBOARD -->
+    <section id="section-dashboard" class="section active">
+      <div class="section-header">
+        <h2>Dashboard</h2>
+        <p class="section-sub">Witaj z powrotem! Oto dzisiejsze podsumowanie.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <p class="stat-label">Wszystkie zlecenia</p>
+            <p class="stat-value" id="statTotal">0</p>
+          </div>
+        </div>
+        <div class="stat-card accent-green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <p class="stat-label">Zrobione</p>
+            <p class="stat-value" id="statDone">0</p>
+          </div>
+        </div>
+        <div class="stat-card accent-yellow">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-info">
+            <p class="stat-label">W trakcie</p>
+            <p class="stat-value" id="statInProgress">0</p>
+          </div>
+        </div>
+        <div class="stat-card accent-blue">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info">
+            <p class="stat-label">Zysk dzienny</p>
+            <p class="stat-value" id="statDailyProfit">0 zł</p>
+          </div>
+        </div>
+        <div class="stat-card accent-purple">
+          <div class="stat-icon">📅</div>
+          <div class="stat-info">
+            <p class="stat-label">Zysk miesięczny</p>
+            <p class="stat-value" id="statMonthlyProfit">0 zł</p>
+          </div>
+        </div>
+        <div class="stat-card accent-red">
+          <div class="stat-icon">👷</div>
+          <div class="stat-info">
+            <p class="stat-label">Pracownicy</p>
+            <p class="stat-value" id="statWorkers">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-bottom">
+        <div class="recent-jobs-card card">
+          <div class="card-header">
+            <h3>Ostatnie zlecenia</h3>
+            <button class="btn btn-primary btn-sm" id="dashAddJobBtn">+ Dodaj zlecenie</button>
+          </div>
+          <div id="recentJobsList" class="jobs-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZLECENIA -->
+    <section id="section-jobs" class="section">
+      <div class="section-header">
+        <h2>Zlecenia</h2>
+        <button class="btn btn-primary" id="addJobBtn">+ Nowe zlecenie</button>
+      </div>
+
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Status:</label>
+          <select id="filterStatus">
+            <option value="all">Wszystkie</option>
+            <option value="NOWE">NOWE</option>
+            <option value="W TRAKCIE">W TRAKCIE</option>
+            <option value="ZROBIONE">ZROBIONE</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Sortuj:</label>
+          <select id="sortBy">
+            <option value="date-desc">Najnowsze</option>
+            <option value="date-asc">Najstarsze</option>
+            <option value="profit-desc">Zysk ↓</option>
+            <option value="profit-asc">Zysk ↑</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Miasto:</label>
+          <input type="text" id="filterCity" placeholder="Szukaj..." />
+        </div>
+      </div>
+
+      <div id="jobsList" class="jobs-grid"></div>
+    </section>
+
+    <!-- PRACOWNICY -->
+    <section id="section-workers" class="section">
+      <div class="section-header">
+        <h2>Pracownicy</h2>
+        <button class="btn btn-primary" id="addWorkerBtn">+ Dodaj pracownika</button>
+      </div>
+      <div id="workersList" class="workers-grid"></div>
+    </section>
+
+    <!-- KLIENCI -->
+    <section id="section-clients" class="section">
+      <div class="section-header">
+        <h2>Klienci</h2>
+        <button class="btn btn-primary" id="addClientBtn">+ Dodaj klienta</button>
+      </div>
+      <div id="clientsList" class="clients-grid"></div>
+    </section>
+
+    <!-- STATYSTYKI -->
+    <section id="section-stats" class="section">
+      <div class="section-header">
+        <h2>Statystyki</h2>
+      </div>
+      <div class="stats-detail-grid">
+        <div class="card stat-detail-card">
+          <h3>Zysk wg miesiąca</h3>
+          <div id="monthlyChart" class="chart-placeholder"></div>
+        </div>
+        <div class="card stat-detail-card">
+          <h3>Zlecenia wg statusu</h3>
+          <div id="statusChart" class="chart-placeholder"></div>
+        </div>
+        <div class="card stat-detail-card wide">
+          <h3>Top 5 miast</h3>
+          <div id="cityChart" class="chart-placeholder"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== MODAL: Dodaj zlecenie ========== -->
+  <div id="jobModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="jobModalTitle">Nowe zlecenie</h3>
+        <button class="modal-close" id="closeJobModal" aria-label="Zamknij">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="jobForm" novalidate>
+          <input type="hidden" id="jobId" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jobCity">Miasto *</label>
+              <input type="text" id="jobCity" placeholder="np. Warszawa" required />
+            </div>
+            <div class="form-group">
+              <label for="jobClient">Klient</label>
+              <select id="jobClient">
+                <option value="">– wybierz klienta –</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jobPeople">Liczba osób *</label>
+              <input type="number" id="jobPeople" min="1" value="1" required />
+            </div>
+            <div class="form-group">
+              <label for="jobHours">Godziny *</label>
+              <input type="number" id="jobHours" min="0.5" step="0.5" value="8" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jobClientRate">Stawka klienta (zł/h) *</label>
+              <input type="number" id="jobClientRate" min="0" step="0.5" value="0" required />
+            </div>
+            <div class="form-group">
+              <label for="jobWorkerRate">Stawka pracownika (zł/h) *</label>
+              <input type="number" id="jobWorkerRate" min="0" step="0.5" value="0" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jobDate">Data</label>
+              <input type="date" id="jobDate" />
+            </div>
+            <div class="form-group">
+              <label for="jobStatus">Status</label>
+              <select id="jobStatus">
+                <option value="NOWE">NOWE</option>
+                <option value="W TRAKCIE">W TRAKCIE</option>
+                <option value="ZROBIONE">ZROBIONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="jobNotes">Uwagi</label>
+            <textarea id="jobNotes" rows="2" placeholder="Opcjonalnie..."></textarea>
+          </div>
+          <div class="profit-preview card">
+            <span>Szacowany zysk:</span>
+            <span id="profitPreview" class="profit-value">0 zł</span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelJobModal">Anuluj</button>
+        <button class="btn btn-primary" id="saveJobBtn">Zapisz zlecenie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: Dodaj pracownika ========== -->
+  <div id="workerModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Pracownik</h3>
+        <button class="modal-close" id="closeWorkerModal" aria-label="Zamknij">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="workerForm" novalidate>
+          <input type="hidden" id="workerId" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="workerName">Imię i nazwisko *</label>
+              <input type="text" id="workerName" placeholder="Jan Kowalski" required />
+            </div>
+            <div class="form-group">
+              <label for="workerPhone">Telefon</label>
+              <input type="tel" id="workerPhone" placeholder="+48 000 000 000" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="workerSkills">Umiejętności</label>
+            <input type="text" id="workerSkills" placeholder="np. budowlanka, malowanie" />
+          </div>
+          <div class="form-group toggle-group">
+            <label>Dostępny</label>
+            <label class="toggle">
+              <input type="checkbox" id="workerAvailable" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelWorkerModal">Anuluj</button>
+        <button class="btn btn-primary" id="saveWorkerBtn">Zapisz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: Dodaj klienta ========== -->
+  <div id="clientModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Klient</h3>
+        <button class="modal-close" id="closeClientModal" aria-label="Zamknij">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="clientForm" novalidate>
+          <input type="hidden" id="clientId" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="clientName">Nazwa firmy / imię *</label>
+              <input type="text" id="clientName" placeholder="np. ABC Budowlanka" required />
+            </div>
+            <div class="form-group">
+              <label for="clientPhone">Telefon</label>
+              <input type="tel" id="clientPhone" placeholder="+48 000 000 000" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="clientEmail">E-mail</label>
+            <input type="email" id="clientEmail" placeholder="kontakt@firma.pl" />
+          </div>
+          <div class="form-group">
+            <label for="clientNotes">Uwagi</label>
+            <textarea id="clientNotes" rows="2" placeholder="Opcjonalnie..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="cancelClientModal">Anuluj</button>
+        <button class="btn btn-primary" id="saveClientBtn">Zapisz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOAST ========== -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
