@@ -119,6 +119,7 @@ function renderDashboard() {
   const daily      = getDailyProfit();
   const monthly    = getMonthlyProfit();
   const workers    = state.workers.length;
+  const totalProfit = state.jobs.reduce((sum, j) => sum + calculateProfit(j), 0);
 
   document.getElementById('statTotal').textContent        = total;
   document.getElementById('statDone').textContent         = done;
@@ -126,6 +127,7 @@ function renderDashboard() {
   document.getElementById('statDailyProfit').textContent  = fmtPLN(daily);
   document.getElementById('statMonthlyProfit').textContent= fmtPLN(monthly);
   document.getElementById('statWorkers').textContent      = workers;
+  document.getElementById('statTotalProfit').textContent  = fmtPLN(totalProfit);
 
   // Ostatnie 5 zleceń – posortuj od najnowszych
   const recent = [...state.jobs]
@@ -277,6 +279,22 @@ function openJobModal(job = null) {
       `<option value="${c.id}" ${job?.clientId === c.id ? 'selected' : ''}>${escHtml(c.name)}</option>`
     ).join('');
 
+  // Wypełnij listę pracowników (checkboxy)
+  const workersGroup = document.getElementById('jobWorkersGroup');
+  const workersList  = document.getElementById('jobWorkersList');
+  if (state.workers.length > 0) {
+    const selected = job?.workerIds || [];
+    workersList.innerHTML = state.workers.map(w =>
+      `<label>
+        <input type="checkbox" name="jobWorker" value="${w.id}" ${selected.includes(w.id) ? 'checked' : ''} />
+        ${escHtml(w.name)}
+      </label>`
+    ).join('');
+    workersGroup.classList.remove('hidden');
+  } else {
+    workersGroup.classList.add('hidden');
+  }
+
   updateProfitPreview();
   document.getElementById('jobModal').classList.remove('hidden');
   document.getElementById('jobCity').focus();
@@ -314,6 +332,8 @@ async function addJob() {
   const notes      = document.getElementById('jobNotes').value.trim();
   const clientId   = document.getElementById('jobClient').value;
   const jobId      = document.getElementById('jobId').value;
+  const workerIds  = Array.from(document.querySelectorAll('input[name="jobWorker"]:checked'))
+    .map(cb => cb.value);
 
   if (!city) { showToast('Podaj miasto.', 'error'); return; }
   if (isNaN(people) || people < 1) { showToast('Podaj poprawną liczbę osób.', 'error'); return; }
@@ -323,6 +343,7 @@ async function addJob() {
     id: jobId || undefined,
     city, people, hours, clientRate, workerRate, date, status, notes,
     clientId: clientId || null,
+    workerIds,
   };
 
   try {
@@ -365,15 +386,24 @@ async function deleteJob(id) {
 // PRACOWNICY
 // ══════════════════════════════════════════════════════════════
 function renderWorkers() {
+  const query = (document.getElementById('filterWorker')?.value || '').toLowerCase().trim();
+  let workers = [...state.workers];
+  if (query) {
+    workers = workers.filter(w =>
+      (w.name   || '').toLowerCase().includes(query) ||
+      (w.phone  || '').toLowerCase().includes(query) ||
+      (w.skills || '').toLowerCase().includes(query)
+    );
+  }
   const container = document.getElementById('workersList');
-  if (state.workers.length === 0) {
+  if (workers.length === 0) {
     container.innerHTML = `<div class="empty-state">
       <div class="empty-icon">👷</div>
-      <p>Brak pracowników. Dodaj pierwszego!</p>
+      <p>${state.workers.length === 0 ? 'Brak pracowników. Dodaj pierwszego!' : 'Brak pracowników spełniających kryteria.'}</p>
     </div>`;
     return;
   }
-  container.innerHTML = state.workers.map(w => workerCard(w)).join('');
+  container.innerHTML = workers.map(w => workerCard(w)).join('');
 }
 
 function workerCard(worker) {
@@ -462,15 +492,24 @@ async function toggleWorkerAvailability(id, available) {
 // KLIENCI
 // ══════════════════════════════════════════════════════════════
 function renderClients() {
+  const query = (document.getElementById('filterClient')?.value || '').toLowerCase().trim();
+  let clients = [...state.clients];
+  if (query) {
+    clients = clients.filter(c =>
+      (c.name  || '').toLowerCase().includes(query) ||
+      (c.phone || '').toLowerCase().includes(query) ||
+      (c.email || '').toLowerCase().includes(query)
+    );
+  }
   const container = document.getElementById('clientsList');
-  if (state.clients.length === 0) {
+  if (clients.length === 0) {
     container.innerHTML = `<div class="empty-state">
       <div class="empty-icon">🏢</div>
-      <p>Brak klientów. Dodaj pierwszego!</p>
+      <p>${state.clients.length === 0 ? 'Brak klientów. Dodaj pierwszego!' : 'Brak klientów spełniających kryteria.'}</p>
     </div>`;
     return;
   }
-  container.innerHTML = state.clients.map(c => clientCard(c)).join('');
+  container.innerHTML = clients.map(c => clientCard(c)).join('');
 }
 
 function clientCard(client) {
@@ -694,6 +733,7 @@ function bindEvents() {
   document.getElementById('cancelWorkerModal').addEventListener('click', closeWorkerModal);
   document.getElementById('workersList').addEventListener('click', handleWorkerListClick);
   document.getElementById('workersList').addEventListener('change', handleWorkerListChange);
+  document.getElementById('filterWorker').addEventListener('input', renderWorkers);
 
   // ── Klienci ───────────────────────────────────────────────
   document.getElementById('addClientBtn').addEventListener('click', () => openClientModal());
@@ -701,6 +741,7 @@ function bindEvents() {
   document.getElementById('closeClientModal').addEventListener('click', closeClientModal);
   document.getElementById('cancelClientModal').addEventListener('click', closeClientModal);
   document.getElementById('clientsList').addEventListener('click', handleClientListClick);
+  document.getElementById('filterClient').addEventListener('input', renderClients);
 
   // Zamknij modala klikając tło
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
