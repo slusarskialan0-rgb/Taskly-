@@ -30,7 +30,7 @@ No installation needed. Just open the files in a browser.
 ├── index.html   # Login page
 ├── app.html     # Main application shell (sidebar, sections, modals)
 ├── app.js       # Application logic (rendering, events, profit calculation)
-├── api.js       # Data layer – localStorage with optional Google Apps Script fallback
+├── api.js       # Data layer – localStorage; Jobs can optionally sync via Google Apps Script
 └── style.css    # All styles (login, sidebar, cards, modals, responsive)
 ```
 
