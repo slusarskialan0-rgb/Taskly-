@@ -99,6 +99,13 @@
             <p class="stat-value" id="statWorkers">0</p>
           </div>
         </div>
+        <div class="stat-card accent-purple">
+          <div class="stat-icon">💎</div>
+          <div class="stat-info">
+            <p class="stat-label">Zysk łączny</p>
+            <p class="stat-value" id="statTotalProfit">0 zł</p>
+          </div>
+        </div>
       </div>
 
       <div class="dashboard-bottom">
@@ -153,6 +160,12 @@
         <h2>Pracownicy</h2>
         <button class="btn btn-primary" id="addWorkerBtn">+ Dodaj pracownika</button>
       </div>
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Szukaj:</label>
+          <input type="text" id="filterWorker" placeholder="Imię, telefon, umiejętności..." />
+        </div>
+      </div>
       <div id="workersList" class="workers-grid"></div>
     </section>
 
@@ -161,6 +174,12 @@
       <div class="section-header">
         <h2>Klienci</h2>
         <button class="btn btn-primary" id="addClientBtn">+ Dodaj klienta</button>
+      </div>
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Szukaj:</label>
+          <input type="text" id="filterClient" placeholder="Nazwa, telefon, e-mail..." />
+        </div>
       </div>
       <div id="clientsList" class="clients-grid"></div>
     </section>
@@ -247,6 +266,10 @@
           <div class="form-group">
             <label for="jobNotes">Uwagi</label>
             <textarea id="jobNotes" rows="2" placeholder="Opcjonalnie..."></textarea>
+          </div>
+          <div class="form-group hidden" id="jobWorkersGroup">
+            <label>Pracownicy</label>
+            <div id="jobWorkersList" class="worker-checkboxes"></div>
           </div>
           <div class="profit-preview card">
             <span>Szacowany zysk:</span>
