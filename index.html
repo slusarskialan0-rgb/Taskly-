@@ -3,82 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TASKLY PRO – Logowanie</title>
+  <title>Taskly – System Leadów</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="login-body">
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-logo">
-        <span class="logo-icon">⚡</span>
-        <h1 class="logo-text">TASKLY <span class="logo-pro">PRO</span></h1>
+<body class="landing-body">
+  <div class="landing-shell">
+    <header class="landing-header">
+      <div class="landing-brand">
+        <div class="landing-mark" aria-hidden="true">T</div>
+        <div>
+          <div class="brand-name">Taskly</div>
+          <div class="brand-tag">System Leadów</div>
+        </div>
       </div>
-      <p class="login-subtitle">Panel zarządzania zleceniami pracy fizycznej</p>
+    </header>
 
-      <form id="loginForm" class="login-form" novalidate>
-        <div class="form-group">
-          <label for="username">Login</label>
-          <input
-            type="text"
-            id="username"
-            placeholder="admin"
-            autocomplete="username"
-            required
-          />
+    <div class="landing-main">
+      <section class="landing-hero">
+        <p class="eyebrow">Leady bez chaosu</p>
+        <h1>Taskly – System Leadów</h1>
+        <p class="lead">
+          Zbieraj i obsługuj leady sprzedażowe w jednym, prostym panelu.
+          Mobile-first, gotowe w kilka minut.
+        </p>
+        <div class="landing-cta">
+          <a class="btn btn-primary" href="app.html">Wejdź do aplikacji</a>
+          <a class="btn btn-ghost" href="#features">Zobacz funkcje</a>
         </div>
-        <div class="form-group">
-          <label for="password">Hasło</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            required
-          />
+        <div class="landing-meta">
+          <div>
+            <div class="meta-label">Czas wdrożenia</div>
+            <div class="meta-value">5 minut</div>
+          </div>
+          <div>
+            <div class="meta-label">Tryb pracy</div>
+            <div class="meta-value">Mobile &amp; Desktop</div>
+          </div>
         </div>
-        <div id="loginError" class="login-error hidden">
-          Nieprawidłowy login lub hasło.
-        </div>
-        <button type="submit" class="btn btn-primary btn-full">
-          Zaloguj się
-        </button>
-      </form>
+      </section>
 
-      <p class="login-hint">Domyślne dane: admin / admin123</p>
+      <section class="landing-panel" aria-label="Podgląd działania">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-status">Leady w czasie rzeczywistym</div>
+            <div class="panel-dot" aria-hidden="true"></div>
+          </div>
+          <ul class="panel-list">
+            <li>
+              <span class="panel-bullet" aria-hidden="true"></span>
+              <span>Automatyczny zapis leadów z formularzy i rozmów.</span>
+            </li>
+            <li>
+              <span class="panel-bullet" aria-hidden="true"></span>
+              <span>Statusy, priorytety i przypisania w jednym widoku.</span>
+            </li>
+            <li>
+              <span class="panel-bullet" aria-hidden="true"></span>
+              <span>Szybkie przełączanie między klientami i zespołami.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
+
+    <section id="features" class="landing-features" aria-label="Najważniejsze funkcje">
+      <div class="feature-card">
+        <div class="feature-title">Szybki start</div>
+        <p class="feature-desc">Gotowy panel do pracy od ręki, bez konfiguracji IT.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Praca w terenie</div>
+        <p class="feature-desc">Mobile-first interfejs działa na telefonie równie sprawnie jak na laptopie.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Priorytety i statusy</div>
+        <p class="feature-desc">Śledź postęp i priorytety, aby żadna szansa nie uciekła.</p>
+      </div>
+    </section>
   </div>
-
-  <script>
-    // Redirect to app if already logged in
-    if (localStorage.getItem('taskly_session') === 'active') {
-      window.location.href = 'app.html';
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value;
-      const err  = document.getElementById('loginError');
-
-      // Check credentials against stored profile, fall back to defaults
-      let validUser = 'admin', validPass = 'admin123';
-      try {
-        const raw = localStorage.getItem('taskly_profile');
-        if (raw) {
-          const profile = JSON.parse(raw);
-          if (profile.username) validUser = profile.username;
-          if (profile.password) validPass = profile.password;
-        }
-      } catch { /* use defaults */ }
-
-      if (user === validUser && pass === validPass) {
-        localStorage.setItem('taskly_session', 'active');
-        localStorage.setItem('taskly_user', user);
-        window.location.href = 'app.html';
-      } else {
-        err.classList.remove('hidden');
-      }
-    });
-  </script>
 </body>
 </html>
