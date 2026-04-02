@@ -31,6 +31,9 @@
       <button class="nav-item" data-section="stats">
         <span class="nav-icon">📈</span> Statystyki
       </button>
+      <button class="nav-item" data-section="leads">
+        <span class="nav-icon">🎯</span> Leady
+      </button>
       <button class="nav-item" data-section="profile">
         <span class="nav-icon">👤</span> Profil
       </button>
@@ -186,6 +189,41 @@
           <h3>Top 5 miast</h3>
           <div id="cityChart" class="chart-placeholder"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- LEADY -->
+    <section id="section-leads" class="section">
+      <div class="section-header">
+        <h2>Leady</h2>
+        <p class="section-sub">Dodaj nowy lead – potencjalnego klienta.</p>
+      </div>
+      <div class="profile-card card">
+        <form id="leadForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leadName">Imię i nazwisko</label>
+              <input type="text" id="leadName" name="name" placeholder="np. Jan Kowalski" />
+            </div>
+            <div class="form-group">
+              <label for="leadPhone">Telefon</label>
+              <input type="text" id="leadPhone" name="phone" placeholder="+48 000 000 000" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="leadCity">Miasto</label>
+              <input type="text" id="leadCity" name="city" placeholder="np. Warszawa" />
+            </div>
+            <div class="form-group">
+              <label for="leadService">Usługa</label>
+              <input type="text" id="leadService" name="service" placeholder="np. sprzątanie" />
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button type="submit" class="btn btn-primary">Dodaj lead</button>
+          </div>
+        </form>
       </div>
     </section>
 
