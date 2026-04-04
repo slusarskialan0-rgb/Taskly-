@@ -13,6 +13,7 @@ const USE_API = API_BASE !== '';
 const LS_JOBS    = 'taskly_jobs';
 const LS_WORKERS = 'taskly_workers';
 const LS_CLIENTS = 'taskly_clients';
+const LS_LEADS   = 'taskly_leads';
 
 // ── Pomocnicze: generuj ID ─────────────────────────────────────
 function generateId() {
@@ -147,6 +148,29 @@ async function apiSaveClient(client) {
 async function apiDeleteClient(id) {
   lsSet(LS_CLIENTS, lsGet(LS_CLIENTS).filter(c => c.id !== id));
 }
+
+// ══════════════════════════════════════════════════════════════
+// LEADS API
+// ══════════════════════════════════════════════════════════════
+
+async function apiGetLeads() {
+  return lsGet(LS_LEADS);
+}
+
+async function apiSaveLead(lead) {
+  if (!lead.id) lead.id = generateId();
+  if (!lead.createdAt) lead.createdAt = new Date().toISOString();
+  const leads = lsGet(LS_LEADS);
+  const idx = leads.findIndex(l => l.id === lead.id);
+  if (idx >= 0) leads[idx] = lead; else leads.unshift(lead);
+  lsSet(LS_LEADS, leads);
+  return lead;
+}
+
+async function apiDeleteLead(id) {
+  lsSet(LS_LEADS, lsGet(LS_LEADS).filter(l => l.id !== id));
+}
+
 
 // ══════════════════════════════════════════════════════════════
 // PROFILE API

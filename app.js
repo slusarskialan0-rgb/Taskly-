@@ -10,6 +10,7 @@ let state = {
   jobs:    [],   // Array<Job>
   workers: [],   // Array<Worker>
   clients: [],   // Array<Client>
+  leads:   [],   // Array<Lead>
   profile: null, // Object
 };
 
@@ -30,14 +31,16 @@ function checkSession() {
 async function init() {
   checkSession();
 
-  const [jobs, workers, clients] = await Promise.all([
+  const [jobs, workers, clients, leads] = await Promise.all([
     apiGetJobs(),
     apiGetWorkers(),
     apiGetClients(),
+    apiGetLeads(),
   ]);
   state.jobs    = jobs;
   state.workers = workers;
   state.clients = clients;
+  state.leads   = leads;
   state.profile = apiGetProfile();
 
   renderAll();
@@ -688,6 +691,47 @@ function saveProfile() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// LEADY
+// ══════════════════════════════════════════════════════════════
+
+/** Obsługa formularza leadów */
+async function handleLeadSubmit(e) {
+  e.preventDefault();
+
+  const name    = document.getElementById('leadName').value.trim();
+  const phone   = document.getElementById('leadPhone').value.trim();
+  const city    = document.getElementById('leadCity').value.trim();
+  const service = document.getElementById('leadService').value.trim();
+
+  // Walidacja
+  if (!name || !phone || !city || !service) {
+    showToast('Wszystkie pola są wymagane.', 'error');
+    return;
+  }
+
+  const lead = {
+    name,
+    phone,
+    city,
+    service,
+    status: 'NOWY',
+  };
+
+  try {
+    const savedLead = await apiSaveLead(lead);
+    state.leads.unshift(savedLead);
+
+    // Wyczyść formularz
+    document.getElementById('leadForm').reset();
+
+    showToast('Lead dodany pomyślnie!', 'success');
+  } catch (err) {
+    console.error('Błąd podczas zapisywania leadu:', err);
+    showToast('Błąd podczas zapisywania leadu.', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // TOAST / POWIADOMIENIA
 // ══════════════════════════════════════════════════════════════
 let toastTimer = null;
@@ -767,6 +811,9 @@ function bindEvents() {
   document.getElementById('closeClientModal').addEventListener('click', closeClientModal);
   document.getElementById('cancelClientModal').addEventListener('click', closeClientModal);
   document.getElementById('clientsList').addEventListener('click', handleClientListClick);
+
+  // ── Leady ─────────────────────────────────────────────────
+  document.getElementById('leadForm').addEventListener('submit', handleLeadSubmit);
 
   // ── Profil ────────────────────────────────────────────────
   document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
